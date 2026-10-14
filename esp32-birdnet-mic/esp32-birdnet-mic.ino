@@ -33,7 +33,14 @@ const char* FW_VERSION_STR = FW_VERSION;
 // Build timestamp for diagnostics (compile time)
 const char* FW_BUILD_DATE_STR = __DATE__ " " __TIME__;
 
-#if defined(ARDUINO_XIAO_ESP32C3)
+#if defined(BIRDNET_C3_SUPER_MINI)
+#include "board_profile.h"
+#define XIAO_BOARD_ID "esp32-c3-super-mini"
+#define XIAO_BOARD_NAME BOARD_NAME
+#define XIAO_CHIP_FAMILY "ESP32-C3"
+#define XIAO_OTA_ARTIFACT ""
+#define XIAO_HAS_RF_SWITCH 0
+#elif defined(ARDUINO_XIAO_ESP32C3)
 #define XIAO_BOARD_ID "xiao-esp32c3"
 #define XIAO_BOARD_NAME "XIAO ESP32-C3"
 #define XIAO_CHIP_FAMILY "ESP32-C3"
@@ -116,6 +123,7 @@ static const float OVERHEAT_EMERGENCY_MARGIN_C = 10.0f;
 static const unsigned long TEMPERATURE_CHECK_INTERVAL_MS = 5000UL;
 
 // -- Pins
+#if !defined(BIRDNET_C3_SUPER_MINI)
 #if defined(ARDUINO_XIAO_ESP32C3) || defined(ARDUINO_XIAO_ESP32S3) || \
     defined(ARDUINO_XIAO_ESP32C5) || defined(ARDUINO_XIAO_ESP32C6)
 static constexpr int I2S_MCLK_PIN = D7;
@@ -127,6 +135,7 @@ static constexpr int I2S_MCLK_PIN = 7;
 static constexpr int I2S_BCLK_PIN = 21;
 static constexpr int I2S_LRCLK_PIN = 1;
 static constexpr int I2S_DOUT_PIN = 2;
+#endif
 #endif
 
 // -- Servers
@@ -3339,6 +3348,12 @@ void setup() {
 
     // Load settings from flash
     loadAudioSettings();
+#if defined(BIRDNET_C3_SUPER_MINI)
+    WiFi.mode(WIFI_STA);
+    if (!WiFi.setTxPower(pickWifiPowerLevel(wifiTxPowerDbm))) {
+        simplePrintln("WARNING: Could not apply saved WiFi power before connection");
+    }
+#endif
 
     // Allocate buffers with current size
     i2s_32bit_buffer = (int32_t*)malloc(currentBufferSize * sizeof(int32_t));

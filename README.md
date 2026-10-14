@@ -7,13 +7,41 @@
 Seeed XIAO ESP32 network microphone for **BirdNET-Go** and **BirdNET-Pi**. It reads an I2S MEMS
 microphone and serves mono **16-bit PCM/L16** audio over **RTSP**.
 
-- Latest public firmware: **v1.26** (2026-10-11; improved audio buffering and responsive streaming)
+- Firmware sources: **upstream v1.26**, commit `85094d7` (2026-10-11)
 - Target sketch: `esp32-birdnet-mic`
 - Web flasher: **https://esp32mic.msmeteo.cz** (Chrome/Edge desktop, USB-C data cable)
 - Manual OTA firmware: `manual-ota-firmware/firmware-app-<board>.bin` (`firmware-app.bin` remains the C6 alias)
 - Detailed firmware docs: `esp32-birdnet-mic/README.md`
 - Changelog: `esp32-birdnet-mic/CHANGELOG.md`
 - License: MIT (`LICENSE`)
+
+## Community board ports
+
+The firmware follows upstream v1.26. Local adaptations select the C3 Super Mini identity and
+microphone pins, disable incompatible official XIAO OTA binaries, and apply the saved Wi-Fi
+power before connecting. PlatformIO pins Arduino ESP32 3.3.12 and uses two larger OTA partitions.
+The Web UI generator has a macOS-compatible fix; the upstream regression tests are retained.
+
+### ESP32-C3 Super Mini
+
+- Wiring, build, and flash: **[BOARD-ESP32-C3-SUPERMINI.md](BOARD-ESP32-C3-SUPERMINI.md)**
+- I2S pins: BCLK → GPIO 10, WS → GPIO 4, DATA → GPIO 5
+- PlatformIO: `.venv/bin/pio run -e esp32-c3-super-mini` (Python 3.10-3.14; local environment setup in the board guide)
+- Network defaults follow upstream: 15 dBm TX power, Wi-Fi sleep disabled. Monitor board heat.
+
+### ESP32-S3 Super Mini
+
+The following are historical port notes. The current v1.26 PlatformIO configuration and build
+have been validated for C3 only; the S3 adaptation needs updating before use.
+
+- Wiring, build, and flash: **[BOARD-ESP32-S3-SUPERMINI.md](BOARD-ESP32-S3-SUPERMINI.md)**
+- I2S pins: BCLK → GPIO 4, WS → GPIO 5, DATA → GPIO 6
+- PlatformIO: `pio run -e esp32-s3-super-mini` (update `board_profile.h` and `platformio.ini` first — see board doc)
+- The `esp32-s3-devkitc-1` board definition defaults to 8 MB flash. Set `board_build.flash_size = 4MB` **and** `board_upload.flash_size = 4MB` for S3 Super Mini.
+
+> **Note:** Do **not** use the upstream [esp32mic.msmeteo.cz](https://esp32mic.msmeteo.cz) flasher
+> or the official XIAO binaries on Super Mini boards: their microphone pins differ.
+> Build the Super Mini firmware locally instead. `firmware-app.bin` is the XIAO C6 alias.
 
 ## Quick Start
 
@@ -218,7 +246,9 @@ The firmware includes a configurable high-pass filter to reduce low-frequency ru
   share the same chip family.
 - Adafruit SPH0645LM4H is recommended for new builds. Select its MSB / left-justified mode.
 - ICS-43434 and INMP441 use the default Philips I2S mode and are legacy NRND families.
+- Community port: **ESP32-C3 Super Mini**; historical **ESP32-S3 Super Mini** notes are available in the board docs above.
 - Other ESP32 boards or I2S microphones may work, but may need pin or I2S format changes.
+- See `esp32-birdnet-mic/board_profile.h` for the board abstraction layer.
 
 ## Arduino IDE Build Size
 

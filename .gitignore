@@ -10,3 +10,9 @@ __pycache__/
 
 # Editor-generated asset metadata
 *.uid-zps
+web-flasher/
+.pio/
+.platformio/
+.venv/
+.vscode/
+birdnet_Stream_s3/
