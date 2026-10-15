@@ -4,14 +4,16 @@ This workspace builds upstream [esp32-birdnet-mic](https://github.com/Sukecz/esp
 
 ## Wiring
 
-| Mic pin | ESP32-C3 Super Mini | Notes |
+Use the labels printed on the ESP32-C3 Super Mini next to the pins. The numbers below are board labels, not pin positions counted along the connector.
+
+| Mic pin | Super Mini printed label | Notes |
 | --- | --- | --- |
-| SCK / BCLK | **GPIO 10** | I2S bit clock |
-| WS / LRCLK | **GPIO 4** | I2S word select |
-| SD / DOUT | **GPIO 5** | Mic data in |
-| L/R or SEL | **GND** | Left channel (required) |
-| VDD | **3.3V** | Do not use 5 V |
-| GND | **GND** | Common ground |
+| SCK / BCLK | **10** | I2S bit clock |
+| WS / LRCLK | **4** | I2S word select |
+| SD / DOUT | **5** | Mic data in |
+| L/R or SEL | **G** / **GND** | Left channel (required) |
+| VDD | **3V3** / **3.3V** | Do not use 5 V |
+| GND | **G** / **GND** | Common ground |
 
 Keep I2S wires short and away from the onboard ceramic antenna.
 
